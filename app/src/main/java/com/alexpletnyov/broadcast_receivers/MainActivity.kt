@@ -4,15 +4,19 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.ProgressBar
+import androidx.appcompat.app.AppCompatActivity
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.alexpletnyov.broadcast_receivers.Receiver.Companion.EXTRA_COUNT
 
 class MainActivity : AppCompatActivity() {
 
 	private val receiver = Receiver()
+	private val localBroadcastManager by lazy {
+		LocalBroadcastManager.getInstance(this)
+	}
 
 	private val receiver2 = object : BroadcastReceiver() {
 		override fun onReceive(context: Context?, intent: Intent?) {
@@ -32,7 +36,7 @@ class MainActivity : AppCompatActivity() {
 		findViewById<Button>(R.id.button_receive).setOnClickListener {
 			Intent(Receiver.ACTION_CLICKED).apply {
 				putExtra(EXTRA_COUNT, count++)
-				sendBroadcast(this)
+				localBroadcastManager.sendBroadcast(this)
 			}
 		}
 
@@ -42,8 +46,8 @@ class MainActivity : AppCompatActivity() {
 			addAction(Receiver.ACTION_CLICKED)
 			addAction(Receiver.ACTION_LOADING_PROGRESS)
 		}
-		registerReceiver(receiver, intentFilter)
-		registerReceiver(receiver2, intentFilter)
+		localBroadcastManager.registerReceiver(receiver, intentFilter)
+		localBroadcastManager.registerReceiver(receiver2, intentFilter)
 		Intent(this, MyService::class.java).apply {
 			startService(this)
 		}
@@ -52,6 +56,6 @@ class MainActivity : AppCompatActivity() {
 	override fun onDestroy() {
 		super.onDestroy()
 		unregisterReceiver(receiver)
-		unregisterReceiver(receiver2)
+		localBroadcastManager.unregisterReceiver(receiver2)
 	}
 }
