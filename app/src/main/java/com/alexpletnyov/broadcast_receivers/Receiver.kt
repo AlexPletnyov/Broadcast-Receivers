@@ -32,5 +32,7 @@ class Receiver : BroadcastReceiver() {
 
 		const val ACTION_CLICKED = "clicked"
 		const val EXTRA_COUNT = "count"
+		const val EXTRA_PERCENT = "percent"
+		const val ACTION_LOADING_PROGRESS = "progress"
 	}
 }
